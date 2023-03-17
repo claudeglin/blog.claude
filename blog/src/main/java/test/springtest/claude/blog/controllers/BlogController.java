@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import test.springtest.claude.blog.models.Post;
 import test.springtest.claude.blog.repo.PostRepository;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -35,8 +36,15 @@ private PostRepository postRepository;
 
     @GetMapping("/blog/{id}")
     public String blogDetails(@PathVariable(value="id")  long id,Model model){
+        if(postRepository.existsById(id)){
+            return "redirect:/blog";
+        }
+
       Optional<Post> post= postRepository.findById(id);
-        return "blog-add";
+        ArrayList<Post> res = new ArrayList<>();
+        post.ifPresent(res::add);
+        model.addAttribute("post", post);
+        return "blog-details";
     }
 
 }
